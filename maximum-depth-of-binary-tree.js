@@ -43,10 +43,9 @@ var maxDepth = function(root) {
     // }
     
     // let depth = 0;
-    // const levels = [[root]];
-    // while (levels.length > 0) {
+    // let level = [root];
+    // while (level.length > 0) {
     //     depth++;
-    //     const level = levels.pop();
     //     const nextLevel = [];
     //     for (const node of level) {
     //         if (node.left != null) {
@@ -57,9 +56,7 @@ var maxDepth = function(root) {
     //         }
     //     }
         
-    //     if (nextLevel.length > 0) {
-    //         levels.push(nextLevel);
-    //     }
+    //     level = nextLevel;
         
     // }
     // return depth;
