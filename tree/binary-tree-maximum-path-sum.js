@@ -18,29 +18,38 @@ var maxPathSum = function(root) {
     }
     
     let maxSum = root.val;
-    (function postOrderTraversal(node) {
-        // the base case is the leaf node
-        if (node.left == null && node.right == null) {
-            return node.val;
-        } else {
-            // check left child
-            const leftValue = node.left == null ? 0 : postOrderTraversal(node.left);
-            // check right child
-            const rightValue = node.right == null ? 0 : postOrderTraversal(node.right);
-            
-            maxSum = Math.max(maxSum, node.val);
-            if (node.val < 0) {
-                maxSum = node.left == null ? maxSum : Math.max(maxSum, leftValue);
-                maxSum = node.right == null ? maxSum : Math.max(maxSum, rightValue);
-                return Math.max(node.val, node.val + leftValue, node.val + rightValue); 
-            } else {
-                maxSum = Math.max(maxSum, node.val + leftValue);
-                maxSum = Math.max(maxSum, node.val + rightValue);
-                maxSum = Math.max(maxSum, node.val + leftValue + rightValue);
-                return node.val + Math.max(leftValue, rightValue, 0);
-            }
-            
+    (function traversePostOrder(node) {
+        // collect all possible candidates for the `maxSum`
+        const maxSumCandidates = [node.val];
+        // and the value returned from this node as we construct the path from here on up
+        const returnValueCandidates = [node.val];
+
+        // check left path
+        let leftPathValue = 0;
+        if (node.left != null) {
+            leftPathValue = node.val + traversePostOrder(node.left);
+            maxSumCandidates.push(leftPathValue);
+            returnValueCandidates.push(leftPathValue);
         }
+        
+        // check right path
+        let rightPathValue = 0;
+        if (node.right != null) {
+            rightPathValue = node.val + traversePostOrder(node.right);
+            maxSumCandidates.push(rightPathValue);
+            returnValueCandidates.push(rightPathValue);
+        }
+
+        if (node.left != null && node.right != null) {
+            // take away the node value since it's counted twice, once in each path
+            maxSumCandidates.push(leftPathValue + rightPathValue - node.val);
+        }
+
+        // update the `maxSum` - we have to check for leaf nodes too
+        maxSum = Math.max(maxSum, ...maxSumCandidates);
+        
+        // when we hit a leaf node, we just end up returning its value
+        return Math.max(...returnValueCandidates);
         
     })(root);
     
