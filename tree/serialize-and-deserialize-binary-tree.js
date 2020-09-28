@@ -15,7 +15,8 @@
  * @return {string}
  */
 var serialize = function(root) {
-    // traverse level-order, start with root, then keep edges as hyphenated pairs
+    // traverse level-order, start with root
+    // keep left & right children encoded as `parent_L_left_R_right`
     if (root == null) {
         return '';
     }
@@ -25,15 +26,24 @@ var serialize = function(root) {
     do {
         let nextLevel = [];
         for (let node of level) {
-            if (node.left) {
-                nextLevel.push(node.left);
-                entries.push(node.val + 'L' + node.left.val);
+            if (node.left == null && node.right == null) {
+                continue;
             }
 
+            let entry = node.val + 'L';
+            if (node.left) {
+                nextLevel.push(node.left);
+                entry += node.left.val;
+            }
+
+            entry += 'R';
             if (node.right) {
                 nextLevel.push(node.right);
-                entries.push(node.val + 'R' + node.right.val);
+                entry += node.right.val;
             }
+
+            entries.push(entry);
+
         }
         level = nextLevel;
         
@@ -63,28 +73,24 @@ var deserialize = function(data) {
         let j = 0;
         while (j < level.length && i < entries.length) {
             const node = level[j];
-            const entry = entries[i];
-            
-            const dir = entry.indexOf('L') > 0 ? 'L' : 'R';
-            // split the entry to get the node the edge connects to
-            const [parentValue, childValue] = entry.split(dir);
+            // split the entry to get the child nodes if any
+            const [parentValue, leftValue, rightValue] = entries[i].split(/[L|R]/);
             
             if (node.val === Number(parentValue)) {
-                const childNode = new TreeNode(Number(childValue));
-                if (dir === 'L') {
-                    node.left = childNode;
-                } else {
-                    node.right = childNode;
+                if (leftValue !== '') {
+                    node.left = new TreeNode(Number(leftValue));
+                    nextLevel.push(node.left);
                 }
 
-                i = i+1;
-                nextLevel.push(childNode);
-                // there's a match, so re-test against the same node in case there's another child
-                continue; 
+                if (rightValue !== '') {
+                    node.right = new TreeNode(Number(rightValue));
+                    nextLevel.push(node.right);
+                }
+                
+                i = i+1; // move on to the next entry
             }
             
-            // no match - move to the next node on this level
-            j = j+1;
+            j = j+1; // move on to the next node on this level
             
         }
         level = nextLevel;
