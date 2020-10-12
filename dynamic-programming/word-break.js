@@ -21,20 +21,31 @@ var wordBreak = function(s, wordDict) {
         }
     }
     
+    // memoization
+    const segmentable = new Set(['']);
+    const notSegmentable = new Set();
+    
     // check recursively
     return (function _isSegmentable(s) {
-        if (s === '') {
+        if (segmentable.has(s)) {
             return true;
+        }
+        
+        if (notSegmentable.has(s)) {
+            return false;
         }
 
         for (let word of wordDict) {
             // if one of the words matches the start of s & the remainder can be segmented
             if (s.startsWith(word) && _isSegmentable(s.slice(word.length))) {
+                segmentable.add(s);
                 return true;
             }
         }
 
+        notSegmentable.add(s);
         return false;
+        
     })(s);
     
 };
