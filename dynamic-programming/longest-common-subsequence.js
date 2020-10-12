@@ -15,18 +15,28 @@ var longestCommonSubsequence = function(text1, text2) {
     
     for (let i = 1; i <= text1.length; i++) {
         for (let j = 1; j <= text2.length; j++) {
-            // you can arrive at state[i][j] in 2 ways
-            // - from state[i-1][j] by adding in a char from text1
-            // - from state[i][j-1] by adding in a char from text2
-            let maxStateSoFar = Math.max(state[i-1][j], state[i][j-1]);
-            if (maxStateSoFar === Math.min(i,j)) {
-                state[i][j] = maxStateSoFar;
+            if (text1[i-1] === text2[j-1]) {
+                // if there's a match, then increment state[i-1][j-1]
+                // you don't want to check state[i-1][j] or state[i][j-1]
+                // because you don't want to consider the same char again
+                state[i][j] = state[i-1][j-1] + 1;
             } else {
-                state[i][j] = maxStateSoFar + (text1[i-1] === text2[j-1] ? 1 : 0);
+                // otherwise you can arrive at state[i][j] in 2 ways, pick the max of the 2
+                // - from state[i-1][j] by adding in a char from text1
+                // - from state[i][j-1] by adding in a char from text2
+                state[i][j] = Math.max(state[i-1][j], state[i][j-1]);
             }
             
         }
     }
+    
+    // for (let i = 0; i <= text1.length; i++) {
+    //     let line = '';
+    //     for (let j = 0; j <= text2.length; j++) {
+    //         line += (state[i][j] + ' ');
+    //     }
+    //     console.log(line);
+    // }
     
     return state[text1.length][text2.length];
     
