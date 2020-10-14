@@ -43,13 +43,7 @@ var isMatch = function(s, p) {
                     return true;
                 }
 
-                // case 2b - '*' matches one char
-                if (_isMatch(s.slice(1), p.slice(1))) {
-                    memo.set(key, true);
-                    return true;
-                }
-
-                // case 2c - '*' matches more than one char
+                // case 2b - '*' matches one or more chars
                 if (_isMatch(s.slice(1), p)) {
                     memo.set(key, true);
                     return true;
