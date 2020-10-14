@@ -20,13 +20,11 @@ var numDecodings = function(s) {
         // we make sure s is never empty as the recursion proceeds
         let count = 0;
         if (s.length >= 1 && _encodings.has(s[0])) {
-            let remainder = s.slice(1);
-            count += (remainder === '' ? 1 : _countDecodings(remainder));
+            count += (s.length === 1 ? 1 : _countDecodings(s.slice(1)));
         } 
         
         if (s.length >= 2 && _encodings.has(s[0] + s[1])) {
-            let remainder = s.slice(2);
-            count += (remainder === '' ? 1 : _countDecodings(remainder));
+            count += (s.length === 2 ? 1 : _countDecodings(s.slice(2)));
         }
         
         memo.set(s, count);

@@ -23,10 +23,10 @@ function combinationSum(candidates: number[], target: number): number[][] {
         }
         
         // weed out the duplicates
-        const uniqueCombinations = [];
-        const normalized = new Set();
+        const uniqueCombinations: number[][] = [];
+        const normalized: Set<string> = new Set();
         for (let combination of combinations) {
-            let key = combination.sort((n1, n2) => n1 - n2).join('-');
+            let key = combination.sort().join('-');
             if (!normalized.has(key)) {
                 normalized.add(key);
                 uniqueCombinations.push(combination);
