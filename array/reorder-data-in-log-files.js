@@ -17,9 +17,11 @@ var reorderLogFiles = function(logs) {
     }
     
     letterLogs.sort((log1, log2) => {
-        const [id1, ...rest1] = log1.split(' ');
-        const [id2, ...rest2] = log2.split(' ');
-        return (rest1.join(' ') + id1).localeCompare(rest2.join(' ') + id2);
+        const space1 = log1.indexOf(' ');
+        const key1 = log1.slice(space1 + 1) + log1.slice(0, space1);
+        const space2 = log2.indexOf(' ');
+        const key2 = log2.slice(space2 + 1) + log2.slice(0, space2);
+        return key1.localeCompare(key2);
     });
     // console.log(letterLogs);
     
