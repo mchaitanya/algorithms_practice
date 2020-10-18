@@ -14,16 +14,9 @@ var isAlienSorted = function(words, order) {
     
     function _shouldComeBefore(word1, word2) {
         for (let i = 0; i < word1.length && i < word2.length; i++) {
-            if (word1[i] === word2[i]) {
-                continue;
+            if (word1[i] !== word2[i]) {
+                return order.indexOf(word1[i]) < order.indexOf(word2[i]);
             } 
-            
-            if (order.indexOf(word1[i]) < order.indexOf(word2[i])) {
-                return true;
-            } else {
-                return false;
-            }
-            
         }
         
         // all the characters must have matched so far
