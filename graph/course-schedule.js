@@ -20,14 +20,12 @@ var canFinish = function(numCourses, prerequisites) {
     // console.log(al);
     
     // do bfs - on each check if there any new courses whose prerequisites have reached zero
-    const finished = Array(numCourses).fill(false);
     let courses = numPrereqs.reduce((zeroPrereqs, count, c) => count === 0 ? zeroPrereqs.concat(c) : zeroPrereqs, []);
     while (courses.length > 0) {
         let nextCourses = [];
         for (let c of courses) {
-            finished[c] = true;
             for (let n of al[c]) {
-                if (finished[n] === false) {
+                if (numPrereqs[n] > 0) {
                     numPrereqs[n]--;
                     if (numPrereqs[n] === 0) {
                         nextCourses.push(n);
@@ -41,6 +39,6 @@ var canFinish = function(numCourses, prerequisites) {
     }
     
     // returns true if all courses can be reached
-    return (finished.indexOf(false) === -1)
+    return numPrereqs.every(c => c === 0);
     
 };
