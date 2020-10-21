@@ -90,7 +90,7 @@ var lowestCommonAncestor = function(root, p, q) {
         // the first time any of the conditions below matches, we'll have hit the the lowest common ancestor
         if (node.val === p.val) {
             if (leftSubtreeContainsQ || rightSubtreeContainsQ) {
-                lca = (lca === undefined ? node : lca);
+                lca = node;
                 return [true, true];
             } else {
                 return [true, false];
@@ -99,7 +99,7 @@ var lowestCommonAncestor = function(root, p, q) {
         
         if (node.val === q.val) {
             if (leftSubtreeContainsP || rightSubtreeContainsP) {
-                lca = (lca === undefined ? node : lca);
+                lca = node;
                 return [true, true];
             } else {
                 return [false, true];
