@@ -24,8 +24,7 @@ var diameter = function(root) {
         for (let c of node.children) {
             let n = _getMaxNodesToLeaf(c);
             if (n > max) {
-                secondMax = max;
-                max = n;
+                [max, secondMax] = [n, max];
             } else if (n > secondMax) {
                 secondMax = n;
             }
