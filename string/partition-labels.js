@@ -10,19 +10,15 @@ var partitionLabels = function(S) {
     }
     
     // process S first - S contains only lowercase chars
-    // keep track of first occurence and last occurence of each char
-    const firstOccurenceMap = new Map();
-    for (let i = 0; i < S.length; i++) {
-        if (!firstOccurenceMap.has(S[i])) {
-            firstOccurenceMap.set(S[i], i);
-        }
+    // maps each char to its index from 0 to 25;
+    const map = new Map();
+    for (let i = 0, code = 'a'.charCodeAt(0); i < 26; i++, code++) {
+        map.set(String.fromCharCode(code), i);
     }
     
-    const lastOccurenceMap = new Map();
-    for (let i = S.length-1; i >= 0; i--) {
-        if (!lastOccurenceMap.has(S[i])) {
-            lastOccurenceMap.set(S[i], i);
-        }
+    const lastOccurences = Array(26).fill(undefined);
+    for (let i = 0; i < S.length; i++) {
+        lastOccurences[ map.get(S[i]) ] = i;
     }
     
     // start is inclusive
@@ -31,10 +27,10 @@ var partitionLabels = function(S) {
             return [];
         }
         
-        let end = lastOccurenceMap.get(S[start]);
+        let end = lastOccurences[ map.get(S[start]) ]
         let i = start+1;
         while (i < end) {
-            end = Math.max(end, lastOccurenceMap.get(S[i]));
+            end = Math.max(end, lastOccurences[ map.get(S[i]) ]);
             i++;
         }
         
