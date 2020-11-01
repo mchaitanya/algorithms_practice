@@ -14,32 +14,46 @@
  * @return {boolean}
  */
 var isSameTree = function(p, q) {
-    let pLevel = [p];
-    let qLevel = [q]; // this'll always be of the same size as pLevel
-    while (pLevel.length > 0) {
-        // compare the values at this level
-        for (let i = 0; i < pLevel.length; i++) {
-            let pNodeValue = pLevel[i] && pLevel[i].val;
-            let qNodeValue = qLevel[i] && qLevel[i].val;
-            if (pNodeValue !== qNodeValue) {
-                return false;
-            }
+    // solve recursively
+    if (p != null && q != null) {
+        if (p.val !== q.val) {
+            return false;
         }
         
-        let pNextLevel = [];
-        let qNextLevel = [];
-        for (let i = 0; i < pLevel.length; i++) {
-            if (pLevel[i] != null) {
-                pNextLevel.push(pLevel[i].left, pLevel[i].right);
-            }
-            if (qLevel[i] != null) {
-                qNextLevel.push(qLevel[i].left, qLevel[i].right);
-            }
-        }
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
         
-        pLevel = pNextLevel;
-        qLevel = qNextLevel;
-        
+    } else {
+        // one of them is null, return true if both are
+        return p === q; 
     }
-    return true;
+
+    // // solve iteratively with level-order traversal
+    // let pLevel = [p];
+    // let qLevel = [q]; // this'll always be of the same size as pLevel
+    // while (pLevel.length > 0) {
+    //     // compare the values at this level
+    //     for (let i = 0; i < pLevel.length; i++) {
+    //         let pNodeValue = pLevel[i] && pLevel[i].val;
+    //         let qNodeValue = qLevel[i] && qLevel[i].val;
+    //         if (pNodeValue !== qNodeValue) {
+    //             return false;
+    //         }
+    //     }
+        
+    //     let pNextLevel = [];
+    //     let qNextLevel = [];
+    //     for (let i = 0; i < pLevel.length; i++) {
+    //         if (pLevel[i] != null) {
+    //             pNextLevel.push(pLevel[i].left, pLevel[i].right);
+    //         }
+    //         if (qLevel[i] != null) {
+    //             qNextLevel.push(qLevel[i].left, qLevel[i].right);
+    //         }
+    //     }
+        
+    //     pLevel = pNextLevel;
+    //     qLevel = qNextLevel;
+        
+    // }
+    // return true;
 };
