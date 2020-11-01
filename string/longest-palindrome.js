@@ -5,23 +5,26 @@
  * @return {number}
  */
 var longestPalindrome = function(s) {
+    let len = 0;
     const map = new Map(); // map chars to their counts
     for (let char of s) {
-        const count = map.get(char) || 0;
-        map.set(char, count+1);
-    }
-    
-    let len = 0;
-    let anyOdd = false;
-    for (let count of map.values()) {
-        if (count % 2 === 0) {
-            len += count;
-        } else {
-            len += (count-1);
-            anyOdd = true;
+        let oldCount = map.get(char) || 0;
+        if (oldCount === 0) {
+            map.set(char, 1);
+        } else if (oldCount === 1) {
+            map.set(char, 0); // consume both occurences of the char for palindrome
+            len += 2;
         }
     }
     
-    return (anyOdd ? len+1 : len);
+    // map can only contains counts of 0 or 1
+    for (let count of map.values()) {
+        if (count === 1) {
+            len++;
+            break;
+        }
+    }
+    
+    return len;
     
 };
