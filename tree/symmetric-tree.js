@@ -13,34 +13,57 @@
  * @return {boolean}
  */
 var isSymmetric = function(root) {
-    // solve with level-order traversal
-    let level = [root];
-    while (level.length > 0) {
-        // console.log(level);
-        for (let i = 0, j = level.length-1; i < j; i++, j--) {
-            const left = level[i], right = level[j];
-            if (left != null && right != null) {
-                if (left.val !== right.val) {
-                    return false;
-                } else {
-                    continue;
-                }
-            }
+    // // solve with level-order traversal
+    // let level = [root];
+    // while (level.length > 0) {
+    //     const left = [], right = [];
+    //     for (let i = 0, j = level.length-1; i <= j; i++, j--) {
+    //         let ns = level[i], ne = level[j];
+    //         if (ns != null || ne != null) {
+    //             if (ns?.val !== ne?.val) {
+    //                 return false;
+    //             }
+                
+    //             // they must both have the same value
+    //             if (i <= j) {
+    //                 left.push(ns.left, ns.right);
+    //             }
+
+    //             if (i < j) {
+    //                 right.push(ne.right, ne.left);
+    //             }
+                
+    //         }
+    //         // both are null
             
-            if (left !== right) {
-                return false;
-            }
-        }
+    //     }
         
-        let nextLevel = [];
-        for (let i = 0; i < level.length; i++) {
-            if (level[i] != null) {
-                nextLevel.push(level[i].left, level[i].right);
-            }
-        }
-        level = nextLevel;
+    //     level = [...left, ...(right.reverse())];
+        
+    // }
+    
+    // return true;
+
+    // solve recursively
+    if (root == null) {
+        return true;
     }
     
-    return true;
+    function _isMirror(left, right) {
+        if (left != null || right != null) {
+            if (left?.val !== right?.val) {
+                return false;
+            }
+            
+            // both values must equal
+            return _isMirror(left.left, right.right) && _isMirror(left.right, right.left);
+            
+        }
+
+        // both must be null
+        return true;
+    }
     
+    return _isMirror(root.left, root.right);
+
 };
