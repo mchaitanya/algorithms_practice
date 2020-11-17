@@ -7,18 +7,28 @@
 var numUniqueEmails = function(emails) {
     function _standardize(email) {
         const [local, domain] = email.split('@');
-        let cleaned = [];
-        for (let char of local) {
-            // remove everything after the first +
-            if (char === '+') {
-                break;
-            }
-            // skip the periods
-            if (char !== '.') {
-                cleaned.push(char);
-            }
+        // remove everything after the first +
+        const maybePlusIx = local.indexOf('+');
+        if (maybePlusIx >= 0) {
+            local = local.substring(0, maybePlusIx);
         }
-        return cleaned.join('') + '@' + domain;
+        // remove all periods
+        local = local.split('.').join('');
+        
+        return  local + '@' + domain;
+
+        // let cleaned = [];
+        // for (let char of local) {
+        //     // remove everything after the first +
+        //     if (char === '+') {
+        //         break;
+        //     }
+        //     // skip the periods
+        //     if (char !== '.') {
+        //         cleaned.push(char);
+        //     }
+        // }
+        // return cleaned.join('') + '@' + domain;
     }
     
     const set = new Set();
