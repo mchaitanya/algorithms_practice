@@ -17,19 +17,39 @@ var subsets = function(nums) {
 
 
     // See Laaksonen, Ch5 - Complete Search - Generating Subsets Method 1
+    // const result = [];
+    // function _search(ix, subset = []) {
+    //     if (ix === nums.length) {
+    //         // all elements have been processed & a subset has been generated
+    //         result.push(subset);
+    //     } else {
+    //         // decide whether to include element at ix or not
+    //         _search(ix+1, subset); // chose not to include
+    //         _search(ix+1, subset.concat(nums[ix])); // chose to include
+    //     }
+    // }
+    
+    // _search(0);
+    // return result;
+
     const result = [];
     function _search(ix, subset = []) {
         if (ix === nums.length) {
             // all elements have been processed & a subset has been generated
-            result.push(subset);
+            // create a copy here, since we manage (push/pop) current subset in same array
+            result.push([...subset]);
         } else {
             // decide whether to include element at ix or not
-            _search(ix+1, subset); // chose not to include
-            _search(ix+1, subset.concat(nums[ix])); // chose to include
+            // chose not to include
+            _search(ix+1, subset);
+            // chose to include
+            subset.push(nums[ix]);
+            _search(ix+1, subset);
+            subset.pop(); // backtracking step
         }
     }
     
     _search(0);
     return result;
-    
+
 };

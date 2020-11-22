@@ -34,25 +34,48 @@ var permute = function(nums) {
     // . 
     // explore all n(n-1)(n-2) ... 1 = n! permutations
     
+    // const permutations = [];
+    // function _search(arr = [], chosen = Array(nums.length).fill(false)) {
+    //     if (arr.length === nums.length) {
+    //         permutations.push(arr);
+    //         return;
+    //     }
+        
+    //     for (let i = 0; i < nums.length; i++) {
+    //         if (chosen[i]) continue;
+    //         // add the ith element to the permutation
+    //         const updatedArr = arr.concat(nums[i]);
+    //         // flip chosen to true for the ith element
+    //         const updatedChosen = chosen.map((flag, j) => j === i ? true : flag);
+    //         _search(updatedArr, updatedChosen);
+    //     }
+        
+    // }
+    
+    // _search();
+    // return permutations;
+    
     const permutations = [];
-    function _search(arr = [], chosen = Array(nums.length).fill(false)) {
+    function _search(arr, chosen) {
         if (arr.length === nums.length) {
-            permutations.push(arr);
+            permutations.push([...arr]);
             return;
         }
         
         for (let i = 0; i < nums.length; i++) {
             if (chosen[i]) continue;
-            // add the ith element to the permutation
-            const updatedArr = arr.concat(nums[i]);
-            // flip chosen to true for the ith element
-            const updatedChosen = chosen.map((flag, j) => j === i ? true : flag);
-            _search(updatedArr, updatedChosen);
+            // backtracking
+            arr.push(nums[i]);
+            chosen[i] = true;
+            _search(arr, chosen);
+            chosen[i] = false;
+            arr.pop();
+            
         }
         
     }
     
-    _search();
+    _search([], Array(nums.length).fill(false));
     return permutations;
-    
+
 };
