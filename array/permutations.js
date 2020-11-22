@@ -56,7 +56,9 @@ var permute = function(nums) {
     // return permutations;
     
     const permutations = [];
-    function _search(arr, chosen) {
+    const arr = [];
+    const chosen = Array(nums.length).fill(false);
+    function _search() {
         if (arr.length === nums.length) {
             permutations.push([...arr]);
             return;
@@ -64,10 +66,16 @@ var permute = function(nums) {
         
         for (let i = 0; i < nums.length; i++) {
             if (chosen[i]) continue;
+            // // add the ith element to the permutation
+            // const updatedArr = arr.concat(nums[i]);
+            // // flip chosen to true for the ith element
+            // const updatedChosen = chosen.map((flag, j) => j === i ? true : flag);
+            // _search(updatedArr, updatedChosen);
+            
             // backtracking
             arr.push(nums[i]);
             chosen[i] = true;
-            _search(arr, chosen);
+            _search();
             chosen[i] = false;
             arr.pop();
             
@@ -75,7 +83,7 @@ var permute = function(nums) {
         
     }
     
-    _search([], Array(nums.length).fill(false));
+    _search();
     return permutations;
 
 };

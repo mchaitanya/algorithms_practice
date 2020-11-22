@@ -33,7 +33,8 @@ var subsets = function(nums) {
     // return result;
 
     const result = [];
-    function _search(ix, subset = []) {
+    const subset = [];
+    function _search(ix) {
         if (ix === nums.length) {
             // all elements have been processed & a subset has been generated
             // create a copy here, since we manage (push/pop) current subset in same array
@@ -41,10 +42,10 @@ var subsets = function(nums) {
         } else {
             // decide whether to include element at ix or not
             // chose not to include
-            _search(ix+1, subset);
+            _search(ix+1);
             // chose to include
             subset.push(nums[ix]);
-            _search(ix+1, subset);
+            _search(ix+1);
             subset.pop(); // backtracking step
         }
     }
