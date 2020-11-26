@@ -32,21 +32,34 @@ var subsets = function(nums) {
     // _search(0);
     // return result;
 
+    // TODO - use console.group() & console.groupEnd() to visualize the backtracking process
+
+    // See Laaksonen, Ch5 - Complete Search - Generating Subsets Method 1
     const result = [];
-    const subset = [];
+    // const subset = [];
+    const included = Array(nums.length).fill(false);
     function _search(ix) {
         if (ix === nums.length) {
             // all elements have been processed & a subset has been generated
             // create a copy here, since we manage (push/pop) current subset in same array
-            result.push([...subset]);
+            // result.push([...subset]);
+            const subset = nums.filter((_, i) => included[i]);
+            console.log(subset);
+            result.push(subset);
         } else {
             // decide whether to include element at ix or not
             // chose not to include
+            console.group('Exclude ' + nums[ix]);
             _search(ix+1);
+            console.groupEnd();
             // chose to include
-            subset.push(nums[ix]);
+            // subset.push(nums[ix]);
+            console.group('Include ' + nums[ix]);
+            included[ix] = true;
             _search(ix+1);
-            subset.pop(); // backtracking step
+            included[ix] = false;
+            console.groupEnd();
+            // subset.pop(); // backtracking step
         }
     }
     
