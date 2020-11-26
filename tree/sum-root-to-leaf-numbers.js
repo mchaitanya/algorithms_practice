@@ -19,24 +19,31 @@ var sumNumbers = function(root) {
     }
     
     let sum = 0;
-    (function dfs(node, pathSum = 0) {
+    console.group(root.val);
+    (function dfs(node, pathNumber = 0) {
         // we make sure node will never be null
-        const newPathSum = (10*pathSum + node.val);
+        const newPathNumber = (10*pathNumber + node.val);
         // when you hit a leaf, update the overall sum
         if (node.left == null && node.right == null) {
-            sum += newPathSum;
+            console.log('number = ' + newPathNumber);
+            sum += newPathNumber;
             return;
         }
         
         if (node.left != null) {
-            dfs(node.left, newPathSum);
+            console.group(node.left.val)
+            dfs(node.left, newPathNumber);
+            console.groupEnd();
         }
         
         if (node.right != null) {
-            dfs(node.right, newPathSum);
+            console.group(node.right.val);
+            dfs(node.right, newPathNumber);
+            console.groupEnd();
         }
         
     })(root);
+    console.groupEnd();
     
     return sum;
     
