@@ -34,8 +34,10 @@ var groupAnagrams = function(strs) {
     let anagramMap = new Map();
     for (let str of strs) {
         const key = str.split('').reduce((prod, char) => prod * primeMap.get(char), 1);
-        const anagrams = anagramMap.get(key) || [];
-        anagramMap.set(key, anagrams.concat(str));
+        if (!anagramMap.has(key)) {
+            anagramMap.set(key, []);
+        }
+        anagramMap.get(key).push(str);
     }
     
     return Array.from(anagramMap.values());
