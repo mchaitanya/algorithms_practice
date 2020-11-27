@@ -14,24 +14,33 @@ var groupAnagrams = function(strs) {
         
     //     return Array.from(map.values());
         
-    let primeMap = new Map();
-    search:
-    for (let count = 0, num = 2, code = 'a'.charCodeAt(0); count < 26; num++) {
-        // check divisibility against the primes found so far
-        for (let p of primeMap.values()) {
-            if (num % p === 0) {
-                continue search;
+    // the generator is responsible for giving us the next prime
+    function* _getPrimes() {
+        const seen = [];
+        search:
+        for (let n = 2; ; n++) {
+            for (let p of seen) {
+                if (n % p === 0) { // divisible by a prime seen before
+                    continue search;
+                }
             }
+            seen.push(n);
+            yield n;
         }
+    }
+    
+    const primeMap = new Map();
+    const primes = _getPrimes();
+    // here we just keep track of the `primeMap`
+    // we don't mix constructing the map with generating the primes
+    for (let count = 0, code = 'a'.charCodeAt(0); count < 26; count++, code++) {
+        let {value:prime} = primes.next();
+        primeMap.set(String.fromCharCode(code), prime);
         
-        // num is a prime if we reach here
-        primeMap.set(String.fromCharCode(code), num);
-        count++;
-        code++;
     }
     // console.log(primeMap);
     
-    let anagramMap = new Map();
+    const anagramMap = new Map();
     for (let str of strs) {
         const key = str.split('').reduce((prod, char) => prod * primeMap.get(char), 1);
         if (!anagramMap.has(key)) {
