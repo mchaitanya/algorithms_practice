@@ -20,13 +20,13 @@ var totalFruit = function(tree) {
         } else {
             // distinct.size === 2 and tree[end] isn't in it
             // advance start till distinct.size drops to 1
-            start++;
             let count = distinct.get(tree[start]);
             if (count > 1) {
                 distinct.set(tree[start], count-1);
             } else {
                 distinct.delete(tree[start]);
             }
+            start++;
         }
     }
     
