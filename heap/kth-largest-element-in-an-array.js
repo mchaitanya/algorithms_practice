@@ -6,19 +6,30 @@
  * @return {number}
  */
 var findKthLargest = function(nums, k) {
-    // can be solved with a min-heap of size k
-    // HEAP IMPLEMENTATION
-    const Heap = function() {
+    const heap = new Heap((p, c) => p <= c); // min heap
+    for (let n of nums) {
+        if (heap.vals.length < k) {
+            heap.add(n);
+        } else if (n > heap.vals[0]) {
+            heap.extract();
+            heap.add(n);
+        }
+    }
+    return heap.vals[0];
+};
+
+class Heap {
+    constructor(comparatorFn) {
         this.vals = [];
-        this.cmp = (p, c) => p <= c;
+        this.cmpFn = comparatorFn;
     }
     
-    Heap.prototype.add = function(val) {
+    add(val) {
         this.vals.push(val);
-        this.bubble(this.vals.length - 1, 'up');
+        this.bubble(this.vals.length-1, 'up');
     }
     
-    Heap.prototype.extract = function() {
+    extract() {
         const rootVal = this.vals.shift();
         const lastVal = this.vals.pop();
         if (lastVal != null) {
@@ -28,44 +39,27 @@ var findKthLargest = function(nums, k) {
         return rootVal;
     }
     
-    Heap.prototype.bubble = function(idx, dir) {
-        const pdx = (dir === 'down' ? idx : Math.floor((idx - 1)/2));
-        const pval = this.vals[pdx];
-        if (pdx < 0) return;
+    bubble(ix, dir) {
+        const px = (dir === 'down' ? ix: Math.floor((ix-1)/2));
+        const pval = this.vals[px];
+        if (px < 0) return;
         
         const len = this.vals.length;
-        const ldx = 2*pdx + 1, lval = this.vals[ldx];
-        const rdx = 2*pdx + 2, rval = this.vals[rdx];
-        
-        if ((ldx < len && !this.cmp(pval, lval)) || (rdx < len && !this.cmp(pval, rval))) {
-            if (rdx < len && this.cmp(rval, lval)) {
-                this.swapThenRecurse(pdx, rdx, dir);
-            } else if (ldx < len) {
-                this.swapThenRecurse(pdx, ldx, dir);
+        const lx = 2*px + 1, lval = this.vals[lx];
+        const rx = 2*px + 2, rval = this.vals[rx];
+        if ((lx < len && !this.cmpFn(pval, lval)) || (rx < len && !this.cmpFn(pval, rval))) {
+            if (rx < len && this.cmpFn(rval, lval)) {
+                this.swapThenRecurse(px, rx, dir);
+            } else if (lx < len) {
+                this.swapThenRecurse(px, lx, dir);
             }
         }
     }
     
-    Heap.prototype.swapThenRecurse = function(pdx, cdx, dir) {
-        const temp = this.vals[pdx];
-        this.vals[pdx] = this.vals[cdx];
-        this.vals[cdx] = temp;
-        
-        const nextIdx = (dir === 'up' ? pdx : cdx);
+    swapThenRecurse(px, cx, dir) {
+        [this.vals[px], this.vals[cx]] = [this.vals[cx], this.vals[px]];
+        const nextIdx = (dir === 'up' ? px : cx);
         this.bubble(nextIdx, dir);
     }
     
-    // SOLUTION STARTS HERE
-    const minHeap = new Heap();
-    for (let num of nums) {
-        if (minHeap.vals.length < k) {
-            minHeap.add(num);
-        } else if (num > minHeap.vals[0]) {
-            minHeap.extract();
-            minHeap.add(num);
-        }
-    }
-    
-    return minHeap.vals[0];
-    
-};
+}
