@@ -1,5 +1,6 @@
 # https://leetcode.com/problems/group-the-people-given-the-group-size-they-belong-to/
 # tags - array
+from collections import defaultdict
 class Solution:
     def groupThePeople(self, groupSizes: List[int]) -> List[List[int]]:
 #         map = {} # Maps each size to a list of groups
@@ -14,10 +15,8 @@ class Solution:
         
 #         return [sub_group for group in map.values() for sub_group in group]
         
-        map = {}
-        for person, size in enumerate(groupSizes):
-            if size not in map:
-                map[size] = []  
+        map = defaultdict(list)
+        for person, size in enumerate(groupSizes): 
             map[size].append(person)
         
         groups = []
