@@ -10,35 +10,23 @@
  */
 /**
  * @param {TreeNode} root
- * @param {number} sum
+ * @param {number} targetSum
  * @return {number[][]}
  */
-var pathSum = function(root, sum) {
-    if (root == null) {
-        return [];
+var pathSum = function (root, targetSum) {
+  if (root == null) return [];
+  const paths = [];
+  function dfs(node, sum, path) {
+    // node shouldn't be null.
+    path.push(node.val);
+    if (node.left == null && node.right == null) {
+      if (sum + node.val === targetSum) paths.push([...path]);
+    } else {
+      if (node.left != null) dfs(node.left, sum + node.val, path);
+      if (node.right != null) dfs(node.right, sum + node.val, path);
     }
-    
-    const paths = [];
-    (function dfs(node, sumSoFar = 0, pathSoFar = []) {
-        const newSum = sumSoFar + node.val;
-        const newPath = pathSoFar.concat(node.val);
-        
-        // base case - hit the leaf
-        if (node.left == null && node.right == null) {
-            if (newSum == sum) {
-                paths.push(newPath);
-            }
-        } else {
-            if (node.left) {
-                dfs(node.left, newSum, newPath);
-            }
-            
-            if (node.right) {
-                dfs(node.right, newSum, newPath);
-            }
-        }
-    })(root);
-    
-    return paths;
-    
+    path.pop();
+  }
+  dfs(root, 0, []);
+  return paths;
 };
