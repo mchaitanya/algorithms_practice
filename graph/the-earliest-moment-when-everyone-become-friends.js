@@ -11,7 +11,7 @@ var earliestAcq = function (logs, n) {
   const rank = new Array(n);
   for (let i = 0; i < n; i++) {
     parent[i] = i;
-    rank[i] = i;
+    rank[i] = 1;
   }
 
   function find(x) {

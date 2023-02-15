@@ -17,7 +17,7 @@ var leadsToDestination = function (n, edges, source, destination) {
   const WHITE = 0,
     GRAY = 1,
     BLACK = 2;
-  const status = new Array(n).fill(0);
+  const status = new Array(n).fill(WHITE);
 
   const memo = new Array(n).fill(null);
   // Return true if all paths from v end in destination.

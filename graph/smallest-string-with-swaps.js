@@ -11,7 +11,7 @@ var smallestStringWithSwaps = function (s, pairs) {
   const rank = new Array(s.length);
   for (let i = 0; i < s.length; i++) {
     parent[i] = i;
-    rank[i] = i;
+    rank[i] = 1;
   }
 
   function find(x) {
