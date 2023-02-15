@@ -17,18 +17,34 @@ var validPath = function (n, edges, source, destination) {
     al[v].push(u);
   }
 
-  // Iterative DFS.
-  const stack = [source];
-  const seen = new Set();
-  while (stack.length > 0) {
-    const v = stack.pop();
+  // BFS
+  const seen = new Array(n).fill(false);
+  seen[source] = true;
+  const queue = [source];
+  while (queue.length > 0) {
+    const v = queue.shift();
     if (v === destination) return true;
-    seen.add(v);
     for (const vn of al[v]) {
-      if (!seen.has(vn)) stack.push(vn);
+      if (!seen[vn]) {
+        seen[vn] = true;
+        queue.push(vn);
+      }
     }
   }
   return false;
+
+  //   // Iterative DFS.
+  //   const stack = [source];
+  //   const seen = new Set();
+  //   while (stack.length > 0) {
+  //     const v = stack.pop();
+  //     if (v === destination) return true;
+  //     seen.add(v);
+  //     for (const vn of al[v]) {
+  //       if (!seen.has(vn)) stack.push(vn);
+  //     }
+  //   }
+  //   return false;
 
   // const seen = new Set();
   // function search(v) {
