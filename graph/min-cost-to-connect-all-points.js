@@ -20,7 +20,7 @@ var minCostConnectPoints = function (points) {
 
   function find(x) {
     if (x === parent[x]) return x;
-    return (x = find(parent[x])); // Path compression.
+    return (parent[x] = find(parent[x])); // Path compression.
   }
 
   // Return false if x & y were already connected. True if they weren't.
