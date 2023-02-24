@@ -54,27 +54,31 @@ var validTree = function (n, edges) {
   // A graph is a tree if it is connected & has n-1 edges.
   if (edges.length !== n - 1) return false;
 
-  // Now check if the graph is connected i.e. it must contain only 1 component.
-  // Apply union-find with path compression.
-  const parent = new Array(n).fill(0).map((val, i) => i);
-
-  function find(x) {
-    if (x === parent[x]) return x;
-    const root = find(parent[x]);
-    parent[x] = root;
-    return root;
-  }
-
-  function union(x, y) {
-    const rootX = find(x);
-    const rootY = find(y);
-    if (rootX !== rootY) parent[rootY] = rootX;
-    return rootX !== rootY;
-  }
-
+  // Apply union-find to check if the graph is connected i.e. it must contain only 1 component.
   let numComponents = n;
+  const uf = new UnionFind(n);
   for (const [x, y] of edges) {
-    if (union(x, y)) numComponents--;
+    if (uf.union(x, y)) numComponents--;
   }
   return numComponents === 1;
 };
+
+class UnionFind {
+  constructor(n) {
+    this.parent = new Array(n).fill(0).map((val, i) => i);
+  }
+
+  find(x) {
+    if (x === this.parent[x]) return x;
+    const root = this.find(this.parent[x]);
+    this.parent[x] = root;
+    return root;
+  }
+
+  union(x, y) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
+    if (rootX !== rootY) this.parent[rootY] = rootX;
+    return rootX !== rootY;
+  }
+}

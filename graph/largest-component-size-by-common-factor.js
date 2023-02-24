@@ -1,5 +1,3 @@
-// https://leetcode.com/problems/largest-component-size-by-common-factor/
-// tags - graph
 /**
  * @param {number[]} nums
  * @return {number}
@@ -21,30 +19,15 @@ var largestComponentSize = function (nums) {
   }
 
   // Apply union-find to find the connected components.
-  const parent = new Array(nums.length);
-  for (let i = 0; i < nums.length; i++) {
-    parent[i] = i;
-  }
-
-  function find(x) {
-    if (x === parent[x]) return x;
-    return (parent[x] = find(parent[x])); // Path compression.
-  }
-
-  function union(x, y) {
-    const rootX = find(x);
-    const rootY = find(y);
-    if (rootX !== rootY) parent[rootY] = rootX;
-  }
-
   // If 2 numbers share a prime factor, connect them.
+  const uf = new UnionFind(nums.length);
   for (const p of primes) {
     for (let i = 0, j = -1; i < nums.length; i++) {
       if (nums[i] % p !== 0) continue;
       if (j === -1) {
         j = i;
       } else {
-        union(i, j);
+        uf.union(i, j);
       }
     }
   }
@@ -52,7 +35,7 @@ var largestComponentSize = function (nums) {
   let maxSize = 0;
   const sizes = new Map();
   for (let i = 0; i < nums.length; i++) {
-    const root = find(i);
+    const root = uf.find(i);
     const size = sizes.get(root) || 0;
     sizes.set(root, size + 1);
     if (size + 1 > maxSize) {
@@ -61,3 +44,29 @@ var largestComponentSize = function (nums) {
   }
   return maxSize;
 };
+
+class UnionFind {
+  constructor(n) {
+    this.parent = new Array(n).fill(0).map((_, i) => i);
+    this.rank = new Array(n).fill(1);
+  }
+
+  find(x) {
+    if (x === this.parent[x]) return x;
+    return (this.parent[x] = this.find(this.parent[x])); // Path compression.
+  }
+
+  union(x, y) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
+    if (rootX === rootY) return;
+    if (this.rank[rootX] > this.rank[rootY]) {
+      this.parent[rootY] = rootX;
+    } else if (this.rank[rootY] > this.rank[rootX]) {
+      this.parent[rootX] = rootY;
+    } else {
+      this.parent[rootY] = rootX;
+      this.rank[rootX]++;
+    }
+  }
+}

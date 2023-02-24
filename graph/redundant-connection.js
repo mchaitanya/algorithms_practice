@@ -7,26 +7,11 @@
 var findRedundantConnection = function (edges) {
   // Try to connect the vertices choosing edges one-by-one from the left.
   // There must be only 1 cycle since only 1 extra edge was added to the tree.
-  const n = edges.length; // Tree contains n-1 edges + 1 extra edge
-  const parent = new Array(n).fill(0).map((val, i) => i);
-
-  function find(x) {
-    if (x === parent[x]) return x;
-    const root = find(parent[x]);
-    parent[x] = root;
-    return root;
-  }
-
-  function union(x, y) {
-    const rootX = find(x);
-    const rootY = find(y);
-    if (rootX !== rootY) parent[rootY] = rootX;
-    return rootX !== rootY;
-  }
-
+  // Tree contains n-1 edges + 1 extra edge
+  const uf = new UnionFind(edges.length);
   // Return the first edge that produces a cycle.
   for (const edge of edges) {
-    if (!union(edge[0], edge[1])) {
+    if (!uf.union(edge[0], edge[1])) {
       return edge;
     }
   }
@@ -131,3 +116,23 @@ var findRedundantConnection = function (edges) {
 
   //     return [];
 };
+
+class UnionFind {
+  constructor(n) {
+    this.parent = new Array(n).fill(0).map((val, i) => i);
+  }
+
+  find(x) {
+    if (x === this.parent[x]) return x;
+    const root = this.find(this.parent[x]);
+    this.parent[x] = root;
+    return root;
+  }
+
+  union(x, y) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
+    if (rootX !== rootY) this.parent[rootY] = rootX;
+    return rootX !== rootY;
+  }
+}

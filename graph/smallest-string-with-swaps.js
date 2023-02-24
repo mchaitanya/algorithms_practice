@@ -7,43 +7,15 @@
  */
 var smallestStringWithSwaps = function (s, pairs) {
   // Apply union-find to find connected components of indices that can be swapped.
-  const parent = new Array(s.length);
-  const rank = new Array(s.length);
-  for (let i = 0; i < s.length; i++) {
-    parent[i] = i;
-    rank[i] = 1;
-  }
-
-  function find(x) {
-    if (x === parent[x]) return x;
-    const root = find(parent[x]);
-    parent[x] = root;
-    return root;
-  }
-
-  function union(x, y) {
-    const rootX = find(x);
-    const rootY = find(y);
-    if (rootX !== rootY) {
-      if (rank[rootX] > rank[rootY]) {
-        parent[rootY] = rootX;
-      } else if (rank[rootY] > rank[rootX]) {
-        parent[rootX] = rootY;
-      } else {
-        parent[rootY] = rootX;
-        rank[rootX]++;
-      }
-    }
-  }
-
+  const uf = new UnionFind(s.length);
   for (const [x, y] of pairs) {
-    union(x, y);
+    uf.union(x, y);
   }
 
   // Map each root to the indices belonging to the component.
   const map = new Map();
   for (let i = 0; i < s.length; i++) {
-    const root = find(i);
+    const root = uf.find(i);
     if (!map.has(root)) map.set(root, []);
     map.get(root).push(i);
   }
@@ -93,3 +65,36 @@ var smallestStringWithSwaps = function (s, pairs) {
   // }
   // return smallestStr;
 };
+
+class UnionFind {
+  constructor(n) {
+    this.parent = new Array(n);
+    this.rank = new Array(n);
+    for (let i = 0; i < n; i++) {
+      this.parent[i] = i;
+      this.rank[i] = 1;
+    }
+  }
+
+  find(x) {
+    if (x === this.parent[x]) return x;
+    const root = this.find(this.parent[x]);
+    this.parent[x] = root;
+    return root;
+  }
+
+  union(x, y) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
+    if (rootX !== rootY) {
+      if (this.rank[rootX] > this.rank[rootY]) {
+        this.parent[rootY] = rootX;
+      } else if (this.rank[rootY] > this.rank[rootX]) {
+        this.parent[rootX] = rootY;
+      } else {
+        this.parent[rootY] = rootX;
+        this.rank[rootX]++;
+      }
+    }
+  }
+}

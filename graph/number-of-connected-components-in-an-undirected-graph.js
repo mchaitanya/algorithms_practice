@@ -7,38 +7,10 @@
  */
 var countComponents = function (n, edges) {
   // Solve with union-find.
-  const parent = new Array(n);
-  const rank = new Array(n);
-  for (let i = 0; i < n; i++) {
-    parent[i] = i;
-    rank[i] = 1;
-  }
-
-  function find(x) {
-    if (parent[x] === x) return x;
-    const root = find(parent[x]);
-    parent[x] = root;
-    return root;
-  }
-
-  function union(x, y) {
-    const rootX = find(x);
-    const rootY = find(y);
-    if (rootX === rootY) return false;
-    if (rank[rootX] > rank[rootY]) {
-      parent[rootY] = rootX;
-    } else if (rank[rootY] > rank[rootX]) {
-      parent[rootX] = rootY;
-    } else {
-      parent[rootY] = rootX;
-      rank[rootX]++;
-    }
-    return true;
-  }
-
   let numComponents = n;
+  const uf = new UnionFind(n);
   for (const [x, y] of edges) {
-    if (union(x, y)) numComponents--;
+    if (uf.union(x, y)) numComponents--;
   }
   return numComponents;
 
@@ -70,3 +42,36 @@ var countComponents = function (n, edges) {
   // }
   // return numComponents;
 };
+
+class UnionFind {
+  constructor(n) {
+    this.parent = new Array(n);
+    this.rank = new Array(n);
+    for (let i = 0; i < n; i++) {
+      this.parent[i] = i;
+      this.rank[i] = 1;
+    }
+  }
+
+  find(x) {
+    if (this.parent[x] === x) return x;
+    const root = this.find(this.parent[x]);
+    this.parent[x] = root;
+    return root;
+  }
+
+  union(x, y) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
+    if (rootX === rootY) return false;
+    if (this.rank[rootX] > this.rank[rootY]) {
+      this.parent[rootY] = rootX;
+    } else if (this.rank[rootY] > this.rank[rootX]) {
+      this.parent[rootX] = rootY;
+    } else {
+      this.parent[rootY] = rootX;
+      this.rank[rootX]++;
+    }
+    return true;
+  }
+}
