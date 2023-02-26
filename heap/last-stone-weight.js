@@ -4,70 +4,69 @@
  * @param {number[]} stones
  * @return {number}
  */
-var lastStoneWeight = function(stones) {    
-    // MAX-HEAP IMPLEMENTATION
-    const Heap = function(comparatorFn) {
-        this._vals = []; // initialize the backing array
-        this._comparatorFn = comparatorFn; // takes a parent & child value & returns a boolean based on their ordering relationship
+var lastStoneWeight = function (stones) {
+  // Solve with a max-heap.
+  const heap = new Heap(stones, (p, c) => p >= c);
+  while (heap.vals.length > 1) {
+    const heaviest = heap.remove();
+    const secondHeaviest = heap.remove();
+    // secondHeaviest can either be equal/less than heaviest.
+    if (secondHeaviest < heaviest) {
+      heap.add(heaviest - secondHeaviest);
     }
-
-    Heap.prototype.add = function(val) {
-        this._vals.push(val); // add the value at the end
-        this._bubble(this._vals.length - 1, 'up'); // fix the heap order
-    }
-
-    Heap.prototype.extract = function() {
-        const rootVal = this._vals.shift(); // remove the root
-        const lastVal = this._vals.pop();
-        if (lastVal != null) {
-            this._vals.unshift(lastVal); // replace the root with the right-most node on the last level
-            this._bubble(0, 'down'); // fix the heap order
-        }
-        return rootVal;
-    }
-
-    Heap.prototype._bubble = function(idx, dir) {
-        const pdx = (dir === 'up' ? Math.floor((idx - 1)/2) : idx);
-        if (pdx < 0) return;
-
-        const ldx = 2*pdx + 1;
-        const rdx = 2*pdx + 2;
-        if ((ldx < this._vals.length && !this._comparatorFn(this._vals[pdx], this._vals[ldx])) || (rdx < this._vals.length && !this._comparatorFn(this._vals[pdx], this._vals[rdx]))) {
-            if (rdx < this._vals.length && this._comparatorFn(this._vals[rdx], this._vals[ldx])) {
-                this._swapThenRecurse(pdx, rdx, dir);
-            } else if (ldx < this._vals.length) {
-                this._swapThenRecurse(pdx, ldx, dir);
-            }
-        }
-
-    }
-
-    Heap.prototype._swapThenRecurse = function(pdx, cdx, dir) {
-        const temp = this._vals[pdx];
-        this._vals[pdx] = this._vals[cdx];
-        this._vals[cdx] = temp;
-
-        const nextIdx = (dir === 'up' ? pdx : cdx);
-        this._bubble(nextIdx, dir);
-
-    }
-    
-    
-    // SOLUTION STARTS HERE
-    // add stones to heap
-    const heap = new Heap((p, c) => p >= c);
-    for (const stone of stones) {
-        heap.add(stone);
-    }
-
-    while (heap._vals.length >= 2) {
-        const heaviest = heap.extract();
-        const secondHeaviest = heap.extract();
-        if (heaviest > secondHeaviest) {
-            heap.add(heaviest - secondHeaviest);
-        }
-    }
-
-    return (heap._vals.length === 0 ? 0 : heap.extract());
-    
+  }
+  return heap.vals.length > 0 ? heap.vals[0] : 0;
 };
+
+class Heap {
+  constructor(vals, cmpFn) {
+    this.vals = vals;
+    this.cmp = cmpFn;
+    this.heapify();
+  }
+
+  add(val) {
+    this.vals.push(val);
+    this.bubble(this.vals.length - 1, "up");
+  }
+
+  remove() {
+    const top = this.vals.shift();
+    if (this.vals.length > 1) {
+      this.vals.unshift(this.vals.pop());
+      this.bubble(0, "down");
+    }
+    return top;
+  }
+
+  heapify() {
+    for (let i = this.vals.length - 1; i >= 0; i--) {
+      this.bubble(i, "down");
+    }
+  }
+
+  bubble(i, dir) {
+    const pi = dir === "down" ? i : Math.floor((i - 1) / 2);
+    if (pi < 0) return;
+    const len = this.vals.length;
+    const li = 2 * pi + 1,
+      ri = 2 * pi + 2;
+    if (li >= len) return;
+    const pval = this.vals[pi],
+      lval = this.vals[li],
+      rval = this.vals[ri];
+    if (!this.cmp(pval, lval) || (ri < len && !this.cmp(pval, rval))) {
+      if (ri < len && this.cmp(rval, lval)) {
+        this.swapThenBubble(pi, ri, dir);
+      } else {
+        this.swapThenBubble(pi, li, dir);
+      }
+    }
+  }
+
+  swapThenBubble(pi, ci, dir) {
+    [this.vals[pi], this.vals[ci]] = [this.vals[ci], this.vals[pi]];
+    const i = dir === "up" ? pi : ci;
+    this.bubble(i, dir);
+  }
+}
