@@ -9,20 +9,12 @@ var minCostConnectPoints = function (points) {
   if (n == 1) return 0;
 
   // PRIM'S ALGORITHM
-  const visited = new Array(n).fill(false);
-  visited[0] = true;
-  let numVisited = 1;
-
   const heap = new Heap((p, c) => p[1] <= c[1]); // Min-heap
-  // Add all edges from point 0 into the heap.
-  for (i = 1; i < n; i++) {
-    const dist =
-      Math.abs(points[i][0] - points[0][0]) +
-      Math.abs(points[i][1] - points[0][1]);
-    heap.add([i, dist]);
-  }
+  heap.add([0, 0]);
 
   let totalCost = 0;
+  let numVisited = 0;
+  const visited = new Array(n).fill(false);
   while (numVisited < n) {
     const [v, dist] = heap.remove();
     if (visited[v]) continue;
