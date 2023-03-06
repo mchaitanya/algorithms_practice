@@ -6,21 +6,16 @@
  * @return {number}
  */
 var longestOnes = function (nums, k) {
-  // Can be restated as: Find the longest subarray containing <= k zeros.
+  // Find the longest subarray with at most k 0s.
+  // Maintain window zero count <= k.
   let maxLen = 0;
-  let start = 0,
-    end = 0;
-  // Invariant - Window contains <= k zeros.
-  let numZeros = 0;
-  while (start < nums.length && end < nums.length) {
-    if (nums[end] === 1 || numZeros < k) {
-      if (nums[end] === 0) numZeros++;
-      maxLen = Math.max(maxLen, end - start + 1);
-      end++;
-    } else {
-      if (nums[start] === 0) numZeros--;
-      start++;
+  for (let numZeros = 0, left = 0, right = 0; right < nums.length; right++) {
+    if (nums[right] === 0) numZeros++;
+    while (left <= right && numZeros > k) {
+      if (nums[left] === 0) numZeros--;
+      left++;
     }
+    maxLen = Math.max(maxLen, right - left + 1);
   }
   return maxLen;
 };
