@@ -6,50 +6,72 @@
  * @return {number}
  */
 var characterReplacement = function (s, k) {
+  // Sliding window - Window size - count of most repeated char <= k
+  // We can flip the other characters into the most repeated char.
   let maxLen = 0;
-  let start = 0,
-    end = 0;
-  // Keep track of char counts in the window.
-  // Invariant - #ops required <= k i.e. window size - max count <= k
-  const map = new Map();
-  let maxCount = 0,
-    maxCountChar = "";
-  while (start < s.length && end < s.length) {
-    // Attempt to add s[end] into the window.
-    const charEndCount = map.get(s[end]) || 0;
-    // Size of the window if s[end] is added
-    const windowAddSize = end - start + 1;
-    if (charEndCount + 1 < maxCount && windowAddSize - maxCount <= k) {
-      map.set(s[end], charEndCount + 1);
-      maxLen = Math.max(maxLen, windowAddSize);
-      end++;
-    } else if (
-      charEndCount + 1 >= maxCount &&
-      windowAddSize - charEndCount - 1 <= k
-    ) {
-      map.set(s[end], charEndCount + 1);
-      maxCountChar = s[end];
-      maxCount = charEndCount + 1;
-      maxLen = Math.max(maxLen, windowAddSize);
-      end++;
-    } else {
-      // Adding s[end] violates the invariant.
-      const charStartCount = map.get(s[start]);
-      map.set(s[start], charStartCount - 1);
-      if (s[start] === maxCountChar) {
-        // Recompute the maxCount. Linear scan okay since map can contain at most 26 entries.
-        maxCount = charStartCount - 1;
-        for (const [char, count] of map.entries()) {
-          if (count > maxCount) {
-            maxCount = count;
-            maxCountChar = char;
-          }
-        }
-      }
-      start++;
+  for (let map = new Map(), left = 0, right = 0; right < s.length; right++) {
+    // Add s[right] into the window.
+    const rcount = map.get(s[right]) || 0;
+    map.set(s[right], rcount + 1);
+
+    while (left <= right) {
+      const windowSize = right - left + 1;
+      const maxCount = Math.max(...map.values());
+      if (windowSize - maxCount <= k) break;
+      const lcount = map.get(s[left]);
+      map.set(s[left], lcount - 1);
+      left++;
     }
+
+    // Invariant should be fixed here.
+    maxLen = Math.max(maxLen, right - left + 1);
   }
   return maxLen;
+
+  // let maxLen = 0;
+  // let start = 0,
+  //   end = 0;
+  // // Keep track of char counts in the window.
+  // // Invariant - #ops required <= k i.e. window size - max count <= k
+  // const map = new Map();
+  // let maxCount = 0,
+  //   maxCountChar = "";
+  // while (start < s.length && end < s.length) {
+  //   // Attempt to add s[end] into the window.
+  //   const charEndCount = map.get(s[end]) || 0;
+  //   // Size of the window if s[end] is added
+  //   const windowAddSize = end - start + 1;
+  //   if (charEndCount + 1 < maxCount && windowAddSize - maxCount <= k) {
+  //     map.set(s[end], charEndCount + 1);
+  //     maxLen = Math.max(maxLen, windowAddSize);
+  //     end++;
+  //   } else if (
+  //     charEndCount + 1 >= maxCount &&
+  //     windowAddSize - charEndCount - 1 <= k
+  //   ) {
+  //     map.set(s[end], charEndCount + 1);
+  //     maxCountChar = s[end];
+  //     maxCount = charEndCount + 1;
+  //     maxLen = Math.max(maxLen, windowAddSize);
+  //     end++;
+  //   } else {
+  //     // Adding s[end] violates the invariant.
+  //     const charStartCount = map.get(s[start]);
+  //     map.set(s[start], charStartCount - 1);
+  //     if (s[start] === maxCountChar) {
+  //       // Recompute the maxCount. Linear scan okay since map can contain at most 26 entries.
+  //       maxCount = charStartCount - 1;
+  //       for (const [char, count] of map.entries()) {
+  //         if (count > maxCount) {
+  //           maxCount = count;
+  //           maxCountChar = char;
+  //         }
+  //       }
+  //     }
+  //     start++;
+  //   }
+  // }
+  // return maxLen;
 
   // function _printMap(map) {
   //     const temp = Array.from(map.entries())
