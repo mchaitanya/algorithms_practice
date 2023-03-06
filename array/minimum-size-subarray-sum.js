@@ -6,22 +6,16 @@
  * @return {number}
  */
 var minSubArrayLen = function (target, nums) {
-  let minLen;
-  let start = 0,
-    end = 0;
-  // Invariant - Sum of numbers in the window < target i.e. runningSum < target
-  let runningSum = 0;
-  while (start < nums.length && end < nums.length) {
-    // Attempt to add nums[end] into the window.
-    const windowAddSize = end - start + 1;
-    if (runningSum + nums[end] < target) {
-      runningSum += nums[end];
-      end++;
-    } else {
-      minLen = Math.min(minLen || Infinity, windowAddSize);
-      runningSum -= nums[start];
-      start++;
+  // Maintain window sum < target
+  let minLen = Infinity;
+  for (let windowSum = 0, left = 0, right = 0; right < nums.length; right++) {
+    windowSum += nums[right];
+    while (left <= right && windowSum >= target) {
+      minLen = Math.min(minLen, right - left + 1);
+      windowSum -= nums[left];
+      left++;
     }
+    // Invariant will be fixed here
   }
-  return minLen || 0;
+  return minLen === Infinity ? 0 : minLen;
 };
