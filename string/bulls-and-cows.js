@@ -6,24 +6,22 @@
  * @return {string}
  */
 var getHint = function (secret, guess) {
-  // Given secret.length === guess.length
+  const secretCounts = new Array(10).fill(0);
+  const guessCounts = new Array(10).fill(0);
+
   let numBulls = 0;
-  const map1 = new Map(),
-    map2 = new Map();
   for (let i = 0; i < secret.length; i++) {
     if (secret[i] === guess[i]) {
       numBulls++;
     } else {
-      map1.set(secret[i], (map1.get(secret[i]) || 0) + 1);
-      map2.set(guess[i], (map2.get(guess[i]) || 0) + 1);
+      secretCounts[Number(secret[i])]++;
+      guessCounts[Number(guess[i])]++;
     }
   }
 
   let numCows = 0;
-  for (const digit of map1.keys()) {
-    if (map2.has(digit)) {
-      numCows += Math.min(map1.get(digit), map2.get(digit));
-    }
+  for (let i = 0; i < 10; i++) {
+    numCows += Math.min(secretCounts[i], guessCounts[i]);
   }
 
   return `${numBulls}A${numCows}B`;
