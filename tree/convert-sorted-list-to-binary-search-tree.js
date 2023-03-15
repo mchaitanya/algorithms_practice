@@ -20,28 +20,49 @@
  * @return {TreeNode}
  */
 var sortedListToBST = function (head) {
-  // Find the length of the linked list.
-  let length = 0;
-  for (let node = head; node != null; node = node.next) {
-    length++;
-  }
+  // end excluded from the constructed BST
+  function convert(start, end) {
+    if (start == end) return null;
+    if (start.next == end) return new TreeNode(start.val);
 
-  function convert(head, length) {
-    if (head == null || length <= 0) return null;
-    if (length === 1) return new TreeNode(head.val);
-    const mid = Math.ceil(length / 2);
-    // Traverse the linked list upto the (mid)th node
-    let node = head;
-    let i = mid - 1; // Go upto mid-1. Then node.next will be the middle node.
-    while (i > 0) {
-      node = node.next;
-      i--;
+    // Find the middle node.
+    let slow = start,
+      fast = start;
+    while (fast != end && fast.next != end) {
+      slow = slow.next;
+      fast = fast.next.next;
     }
-    // node is the middle node here.
-    const leftBST = convert(head, mid - 1);
-    const rightBST = convert(node.next, length - mid);
-    return new TreeNode(node.val, leftBST, rightBST);
+    // slow is the middle node.
+
+    const leftBST = convert(start, slow);
+    const rightBST = convert(slow.next, end);
+    return new TreeNode(slow.val, leftBST, rightBST);
   }
 
-  return convert(head, length);
+  return convert(head, null);
+
+  // // Find the length of the linked list.
+  // let length = 0;
+  // for (let node = head; node != null; node = node.next) {
+  //   length++;
+  // }
+
+  // function convert(head, length) {
+  //   if (head == null || length <= 0) return null;
+  //   if (length === 1) return new TreeNode(head.val);
+  //   const mid = Math.ceil(length / 2);
+  //   // Traverse the linked list upto the (mid)th node
+  //   let node = head;
+  //   let i = mid - 1; // Go upto mid-1. Then node.next will be the middle node.
+  //   while (i > 0) {
+  //     node = node.next;
+  //     i--;
+  //   }
+  //   // node is the middle node here.
+  //   const leftBST = convert(head, mid - 1);
+  //   const rightBST = convert(node.next, length - mid);
+  //   return new TreeNode(node.val, leftBST, rightBST);
+  // }
+
+  // return convert(head, length);
 };
