@@ -18,22 +18,24 @@ var findItinerary = function (tickets) {
   }
 
   const used = new Array(tickets.length).fill(false);
-  const path = ["JFK"];
   // Returns true when all the tickets are used up.
-  function dfs(from) {
+  function dfs(from, path) {
+    path.push(from);
+    if (path.length === tickets.length + 1) return true;
     for (const i of map.get(from) || []) {
       if (used[i]) continue;
       const to = tickets[i][1];
       // Attempt to use ticket i.
       used[i] = true;
-      path.push(to);
-      if (path.length === tickets.length + 1 || dfs(to)) return true;
+      if (dfs(to, path)) return true;
       // Backtrack if that doesn't work.
-      path.pop(to);
       used[i] = false;
     }
+    path.pop();
     return false;
   }
-  dfs("JFK");
+
+  const path = [];
+  dfs("JFK", path);
   return path;
 };
