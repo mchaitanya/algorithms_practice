@@ -1,0 +1,33 @@
+// https://leetcode.com/problems/rotated-digits/
+// tags - number
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var rotatedDigits = function (n) {
+  const mapping = new Map([
+    ["0", "0"],
+    ["1", "1"],
+    ["2", "5"],
+    ["5", "2"],
+    ["6", "9"],
+    ["8", "8"],
+    ["9", "6"],
+  ]);
+
+  function isGood(n) {
+    const s = String(n);
+    let rotated = "";
+    for (const c of s) {
+      if (!mapping.has(c)) return false;
+      rotated += mapping.get(c);
+    }
+    return s !== rotated;
+  }
+
+  let numGood = 0;
+  for (let i = 1; i <= n; i++) {
+    if (isGood(i)) numGood++;
+  }
+  return numGood;
+};
