@@ -13,19 +13,38 @@
  * @return {ListNode}
  */
 var mergeTwoLists = function (l1, l2) {
-  // Solve with recursion.
-  if (list1 == null) {
-    return list2;
-  } else if (list2 == null) {
-    return list1;
-  } else if (list1.val <= list2.val) {
-    // list1 & list2 are both not null here.
-    list1.next = mergeTwoLists(list1.next, list2);
-    return list1;
-  } else {
-    list2.next = mergeTwoLists(list1, list2.next);
-    return list2;
+  // Solve iteratively.
+  let head = new ListNode();
+  let curr = head,
+    node1 = list1,
+    node2 = list2;
+  while (node1 != null || node2 != null) {
+    const val1 = node1?.val ?? Infinity;
+    const val2 = node2?.val ?? Infinity;
+    if (val1 < val2) {
+      curr.next = node1;
+      node1 = node1.next;
+    } else {
+      curr.next = node2;
+      node2 = node2.next;
+    }
+    curr = curr.next;
   }
+  return head.next;
+
+  // // Solve with recursion.
+  // if (list1 == null) {
+  //   return list2;
+  // } else if (list2 == null) {
+  //   return list1;
+  // } else if (list1.val <= list2.val) {
+  //   // list1 & list2 are both not null here.
+  //   list1.next = mergeTwoLists(list1.next, list2);
+  //   return list1;
+  // } else {
+  //   list2.next = mergeTwoLists(list1, list2.next);
+  //   return list2;
+  // }
 
   // let curr = null, merged = null;
   // let n1 = l1, n2 = l2;
