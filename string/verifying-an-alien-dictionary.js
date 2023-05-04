@@ -5,24 +5,24 @@
  * @param {string} order
  * @return {boolean}
  */
-var isAlienSorted = function(words, order) {
-    for (let i = 1; i < words.length; i++) {
-        if (_shouldComeBefore(words[i], words[i-1])) {
-            return false;
-        }
+var isAlienSorted = function (words, order) {
+  // Map each char to its position.
+  const position = new Map();
+  for (let i = 0; i < order.length; i++) {
+    position.set(order[i], i);
+  }
+
+  function comesBefore(w1, w2) {
+    for (let i = 0; i < w1.length && i < w2.length; i++) {
+      if (w1[i] !== w2[i]) {
+        return position.get(w1[i]) < position.get(w2[i]);
+      }
     }
-    
-    function _shouldComeBefore(word1, word2) {
-        for (let i = 0; i < word1.length && i < word2.length; i++) {
-            if (word1[i] !== word2[i]) {
-                return order.indexOf(word1[i]) < order.indexOf(word2[i]);
-            } 
-        }
-        
-        // all the characters must have matched so far
-        return word1.length < word2.length;
-    }
-    
-    return true;
-    
+    return w1.length <= w2.length;
+  }
+
+  for (let i = 0; i < words.length - 1; i++) {
+    if (!comesBefore(words[i], words[i + 1])) return false;
+  }
+  return true;
 };
