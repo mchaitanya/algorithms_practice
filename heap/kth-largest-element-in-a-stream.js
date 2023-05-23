@@ -6,14 +6,11 @@
  */
 var KthLargest = function (k, nums) {
   this.size = k;
-  this.heap = new Heap(nums.slice(0, k), (p, c) => p <= c); // Min-heap
-  for (let i = k; i < nums.length; i++) {
-    this.add(nums[i]);
+  // See: https://github.com/datastructures-js/priority-queue/tree/v5.3.0#api
+  this.mpq = new MinPriorityQueue();
+  for (const num of nums) {
+    this.add(num);
   }
-  // this.heap = new Heap([], (p,c) => p <= c);
-  // for (const n of nums) {
-  //     this.add(n);
-  // }
 };
 
 /**
@@ -21,13 +18,13 @@ var KthLargest = function (k, nums) {
  * @return {number}
  */
 KthLargest.prototype.add = function (val) {
-  if (this.heap.vals.length < this.size) {
-    this.heap.add(val);
-  } else if (val > this.heap.vals[0]) {
-    this.heap.remove();
-    this.heap.add(val);
+  if (this.mpq.size() < this.size) {
+    this.mpq.enqueue(val);
+  } else if (val > this.mpq.front().element) {
+    this.mpq.dequeue();
+    this.mpq.enqueue(val);
   }
-  return this.heap.vals[0];
+  return this.mpq.front().element;
 };
 
 /**
@@ -36,58 +33,88 @@ KthLargest.prototype.add = function (val) {
  * var param_1 = obj.add(val)
  */
 
-class Heap {
-  constructor(vals, cmpFn) {
-    this.vals = vals;
-    this.cmp = cmpFn;
-    this.heapify();
-  }
+// /**
+//  * @param {number} k
+//  * @param {number[]} nums
+//  */
+// var KthLargest = function (k, nums) {
+//   this.size = k;
+//   this.heap = new Heap(nums.slice(0, k), (p, c) => p <= c); // Min-heap
+//   for (let i = k; i < nums.length; i++) {
+//     this.add(nums[i]);
+//   }
+//   // this.heap = new Heap([], (p,c) => p <= c);
+//   // for (const n of nums) {
+//   //     this.add(n);
+//   // }
+// };
 
-  add(val) {
-    this.vals.push(val);
-    this.bubble(this.vals.length - 1, "up");
-  }
+// /**
+//  * @param {number} val
+//  * @return {number}
+//  */
+// KthLargest.prototype.add = function (val) {
+//   if (this.heap.vals.length < this.size) {
+//     this.heap.add(val);
+//   } else if (val > this.heap.vals[0]) {
+//     this.heap.remove();
+//     this.heap.add(val);
+//   }
+//   return this.heap.vals[0];
+// };
 
-  remove() {
-    const top = this.vals.shift();
-    if (this.vals.length > 1) {
-      this.vals.unshift(this.vals.pop());
-      this.bubble(0, "down");
-    }
-    return top;
-  }
+// class Heap {
+//   constructor(vals, cmpFn) {
+//     this.vals = vals;
+//     this.cmp = cmpFn;
+//     this.heapify();
+//   }
 
-  heapify() {
-    for (let i = this.vals.length - 1; i >= 0; i--) {
-      this.bubble(i, "down");
-    }
-  }
+//   add(val) {
+//     this.vals.push(val);
+//     this.bubble(this.vals.length - 1, "up");
+//   }
 
-  bubble(i, dir) {
-    const pi = dir === "down" ? i : Math.floor((i - 1) / 2);
-    if (pi < 0) return;
-    const len = this.vals.length;
-    const li = 2 * pi + 1,
-      ri = 2 * pi + 2;
-    if (li >= len) return;
-    const pval = this.vals[pi],
-      lval = this.vals[li],
-      rval = this.vals[ri];
-    if (!this.cmp(pval, lval) || (ri < len && !this.cmp(pval, rval))) {
-      if (ri < len && this.cmp(rval, lval)) {
-        this.swapThenBubble(pi, ri, dir);
-      } else {
-        this.swapThenBubble(pi, li, dir);
-      }
-    }
-  }
+//   remove() {
+//     const top = this.vals.shift();
+//     if (this.vals.length > 1) {
+//       this.vals.unshift(this.vals.pop());
+//       this.bubble(0, "down");
+//     }
+//     return top;
+//   }
 
-  swapThenBubble(pi, ci, dir) {
-    [this.vals[pi], this.vals[ci]] = [this.vals[ci], this.vals[pi]];
-    const i = dir === "up" ? pi : ci;
-    this.bubble(i, dir);
-  }
-}
+//   heapify() {
+//     for (let i = this.vals.length - 1; i >= 0; i--) {
+//       this.bubble(i, "down");
+//     }
+//   }
+
+//   bubble(i, dir) {
+//     const pi = dir === "down" ? i : Math.floor((i - 1) / 2);
+//     if (pi < 0) return;
+//     const len = this.vals.length;
+//     const li = 2 * pi + 1,
+//       ri = 2 * pi + 2;
+//     if (li >= len) return;
+//     const pval = this.vals[pi],
+//       lval = this.vals[li],
+//       rval = this.vals[ri];
+//     if (!this.cmp(pval, lval) || (ri < len && !this.cmp(pval, rval))) {
+//       if (ri < len && this.cmp(rval, lval)) {
+//         this.swapThenBubble(pi, ri, dir);
+//       } else {
+//         this.swapThenBubble(pi, li, dir);
+//       }
+//     }
+//   }
+
+//   swapThenBubble(pi, ci, dir) {
+//     [this.vals[pi], this.vals[ci]] = [this.vals[ci], this.vals[pi]];
+//     const i = dir === "up" ? pi : ci;
+//     this.bubble(i, dir);
+//   }
+// }
 
 // /**
 //  * @param {number} k
